@@ -1,0 +1,9 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: aircraft-tracker
+aircraft-tracker:
+  json-filepath: "/Users/garypope/Desktop/aircraft.json"
+  interval: 2000
