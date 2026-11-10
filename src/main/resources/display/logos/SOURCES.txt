@@ -1,0 +1,2 @@
+Airline logos: https://github.com/Jxck-S/airline-logos/tree/main/flightaware_logos
+Logos remain the trademarks of their respective airlines. Used to identify observed aircraft operators.

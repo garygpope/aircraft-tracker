@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#091a22" />
+    <title>Over the roof · Live sky</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="brand">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M3 11 12 4l9 7M6 10v10h12V10M10 20v-6h4v6"
+              stroke="currentColor"
+              stroke-width="1.5"
+            />
+          </svg>
+          <h1>Over the roof<span style="color: var(--lime)">.</span></h1>
+        </div>
+        <div class="live" role="status">
+          <i class="dot"></i><span id="status">Connecting</span>
+        </div>
+        <div class="clock">
+          <small>DUBLIN</small><span id="clock">--:--</span>
+        </div>
+      </header>
+      <div class="stage">
+        <section class="flight-card" id="card" aria-label="Featured aircraft">
+          <div class="contours"></div>
+          <img class="photo" id="photo" alt="" />
+          <div class="shade"></div>
+          <div class="heading">
+            <div class="airline-identity">
+              <div class="logo-box" id="logo-box" hidden>
+                <img id="airline-logo" alt="" />
+              </div>
+              <div>
+                <div class="airline-name" id="airline-name">LOCAL SKY</div>
+                <span class="callsign" id="flight">LISTENING</span>
+                <div class="flight-reference" id="flight-reference"></div>
+              </div>
+            </div>
+            <span class="badge" id="badge">LISTENING</span>
+          </div>
+          <div class="journey">
+            <div class="direction" id="direction">A window on your sky</div>
+            <h2 class="city" id="city">Look up.<br />There’s a story.</h2>
+            <div class="airport" id="airport">
+              Connecting to your PiAware receiver
+            </div>
+          </div>
+          <section
+            class="radar-panel"
+            aria-label="Live aircraft positions around home"
+          >
+            <div class="radar-title">
+              <span class="eyebrow">The neighbourhood sky</span>
+            </div>
+            <span id="range">10 KM RANGE</span
+            ><svg
+              class="scope"
+              viewBox="0 0 400 400"
+              role="img"
+              aria-label="North-up radar showing aircraft relative to home"
+            >
+              <defs>
+                <clipPath id="map-clip">
+                  <circle cx="200" cy="200" r="170" />
+                </clipPath>
+                <radialGradient id="glow">
+                  <stop stop-color="#b2e5a7" stop-opacity=".12" />
+                  <stop offset="1" stop-color="#b2e5a7" stop-opacity="0" />
+                </radialGradient>
+                <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#d7ff82" stop-opacity="0" />
+                  <stop offset="1" stop-color="#d7ff82" stop-opacity=".16" />
+                </linearGradient>
+              </defs>
+              <image
+                id="satellite"
+                x="30"
+                y="30"
+                width="340"
+                height="340"
+                preserveAspectRatio="none"
+                clip-path="url(#map-clip)"
+                opacity="0"
+              />
+              <circle
+                cx="200"
+                cy="200"
+                r="170"
+                fill="#031719"
+                fill-opacity=".22"
+              />
+              <circle cx="200" cy="200" r="170" fill="url(#glow)" />
+              <path
+                class="cross"
+                d="M30 200h340M200 30v340M80 80l240 240M80 320 320 80"
+              />
+              <circle class="ring" cx="200" cy="200" r="170" />
+              <circle class="ring" cx="200" cy="200" r="127.5" />
+              <circle class="ring" cx="200" cy="200" r="85" />
+              <circle class="ring" cx="200" cy="200" r="42.5" />
+              <circle class="zone" id="zone" cx="200" cy="200" r="170" />
+              <g class="sweep" id="radar-sweep">
+                <path
+                  d="M200 200 200 30A170 170 0 0 1 347.2 115Z"
+                  fill="url(#beam)"
+                />
+                <path d="M200 200V30" stroke="#d7ff82" stroke-opacity=".35" />
+              </g>
+              <text class="radar-text" x="200" y="19" text-anchor="middle">
+                N
+              </text>
+              <text class="radar-text" x="385" y="203" text-anchor="middle">
+                E
+              </text>
+              <text class="radar-text" x="200" y="390" text-anchor="middle">
+                S
+              </text>
+              <text class="radar-text" x="15" y="203" text-anchor="middle">
+                W
+              </text>
+              <circle class="home-pulse" cx="200" cy="200" r="8" />
+              <circle cx="200" cy="200" r="4" fill="#d7ff82" />
+              <text class="radar-text" x="200" y="218" text-anchor="middle">
+                HOME
+              </text>
+              <g id="planes"></g>
+            </svg>
+            <div class="radar-bottom">
+              <span class="legend"
+                ><i class="arrival"></i> In <i class="departure"></i> Out
+                <i class="likely"></i> Likely <i class="other"></i> Other</span
+              ><span>NORTH UP · <span id="count">0</span> WITHIN 10 KM</span
+              ><span class="map-credit" id="map-credit" hidden
+                ><a
+                  href="https://cloudless.eox.at"
+                  target="_blank"
+                  rel="noopener"
+                  >EOxCloudless</a
+                >
+                by
+                <a href="https://eox.at" target="_blank" rel="noopener"
+                  >EOX IT Services GmbH</a
+                ><br />Modified Copernicus Sentinel data 2025 ·
+                <a
+                  href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                  target="_blank"
+                  rel="noopener"
+                  >CC BY-NC-SA</a
+                ></span
+              >
+            </div>
+          </section>
+          <div class="metrics">
+            <div class="metric">
+              <div>
+                <span class="value" id="distance">—</span
+                ><span class="unit">km away</span>
+              </div>
+              <div class="eyebrow">From home</div>
+            </div>
+            <div class="metric">
+              <div>
+                <span class="value" id="altitude">—</span
+                ><span class="unit">ft</span>
+              </div>
+              <div class="eyebrow">Altitude</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="movement">—</div>
+              <div class="eyebrow">Vertical movement</div>
+            </div>
+          </div>
+          <div class="note" id="note">
+            Live positions from your rooftop receiver
+          </div>
+          <div class="credit" id="credit"></div>
+        </section>
+      </div>
+      <div class="traffic">
+        <div class="traffic-label eyebrow">Also<br />in the sky</div>
+        <div class="traffic-list" id="traffic"></div>
+      </div>
+      <footer>
+        <span id="updated">Waiting for the receiver</span
+        ><span id="mode">PIAWARE / DUBLIN</span>
+      </footer>
+    </main>
+    <div id="preview-controls" hidden>
+      <span id="preview-size"></span
+      ><button id="preview-toggle" type="button">Fill tab for casting</button>
+    </div>
+    <div class="refresh" aria-hidden="true"></div>
+    <script src="./traffic.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
