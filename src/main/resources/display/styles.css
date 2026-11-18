@@ -26,7 +26,7 @@ main {
   margin: auto;
   padding: 24px 28px 18px;
   display: grid;
-  grid-template-rows: 42px minmax(0, 1fr) 60px 20px;
+  grid-template-rows: 42px minmax(0, 1fr) 20px;
   gap: 16px;
 }
 header,
@@ -170,7 +170,7 @@ h1 {
 }
 .metrics {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   border-top: 1px solid #ffffff30;
   padding-top: 16px;
   margin-top: 12px;
@@ -540,7 +540,7 @@ body.nest main {
   margin: 0;
   padding: 32px 44px 24px;
   transform-origin: 0 0;
-  grid-template-rows: 36px minmax(0, 1fr) 52px 18px;
+  grid-template-rows: 36px minmax(0, 1fr) 18px;
   gap: 12px;
 }
 .nest .stage {
@@ -585,7 +585,7 @@ body.nest main {
   padding-top: 12px;
   margin-top: 8px;
   gap: 8px;
-  grid-template-columns: 1fr 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   grid-column: 1;
   grid-row: 3;
   margin: 0;
@@ -762,7 +762,7 @@ body.cast-view {
 .cast-view.nest main {
   padding: 6px 8px;
   gap: 6px;
-  grid-template-rows: 32px minmax(0, 1fr) 44px 15px;
+  grid-template-rows: 32px minmax(0, 1fr) 15px;
   box-shadow: none;
 }
 .cast-view.nest .flight-card {
@@ -868,3 +868,242 @@ body.cast-view {
 .nest .flight-reference {
   font-size: 10px;
 }
+
+
+/* Responsive browsing uses normal document flow; Nest keeps its original canvas. */
+body:not(.nest) { overflow: auto; }
+body:not(.nest) main {
+  height: auto;
+  min-height: 100dvh;
+  align-content: start;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto;
+  gap: 20px;
+}
+body:not(.nest) .stage { display: block; }
+body:not(.nest) .flight-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(180px, 1fr) auto auto;
+  gap: 16px 28px;
+  min-height: 490px;
+}
+body:not(.nest) .heading { grid-column: 1 / -1; flex-wrap: wrap; }
+body:not(.nest) .journey { grid-column: 1; grid-row: 2; align-self: center; margin: 0; }
+body:not(.nest) .metrics { grid-column: 1; grid-row: 3; margin: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+body:not(.nest) .note { grid-column: 1; grid-row: 4; margin: 0; }
+body:not(.nest) .credit { grid-column: 1 / -1; grid-row: 4; white-space: normal; }
+body:not(.nest) .radar-panel {
+  grid-column: 2;
+  grid-row: 2 / 4;
+  min-height: 380px;
+  background: #071a1bc9;
+  border-radius: 12px;
+}
+body:not(.nest) .scope { top: 30px; height: calc(100% - 116px); }
+body:not(.nest) .radar-title { top: 12px; left: 12px; }
+body:not(.nest) #range { top: 12px; right: 12px; }
+body:not(.nest) .radar-bottom { bottom: 12px; gap: 6px; }
+body:not(.nest) .callsign { font-size: 28px; overflow-wrap: anywhere; }
+body:not(.nest) .airport { font-size: 16px; }
+body:not(.nest) .traffic-item strong { font-size: 16px; }
+body:not(.nest) .traffic-item span { font-size: 14px; }
+body:not(.nest) .traffic-item small { font-size: 13px; white-space: normal; line-height: 1.5; }
+body:not(.nest) .note { font-size: 12px; }
+body:not(.nest) .credit, body:not(.nest) footer { font-size: 11px; line-height: 1.5; }
+body:not(.nest) .refresh { display: none; }
+@media (max-width: 760px) {
+  body:not(.nest) main { padding: 18px 16px; gap: 16px; }
+  body:not(.nest) header { flex-wrap: wrap; gap: 14px; }
+  body:not(.nest) .brand { flex: 1; }
+  body:not(.nest) .live { order: 3; flex-basis: 100%; }
+  body:not(.nest) .clock small { display: none; }
+  body:not(.nest) .flight-card { display: flex; flex-direction: column; padding: 20px; gap: 18px; min-height: 0; }
+  body:not(.nest) .heading { gap: 14px; }
+  body:not(.nest) .airline-identity { gap: 12px; }
+  body:not(.nest) .logo-box { width: 88px; height: 48px; padding: 7px; }
+  body:not(.nest) .city { font-size: clamp(32px, 9vw, 54px); letter-spacing: -1px; }
+  body:not(.nest) .journey { padding-top: 4px; align-self: stretch; }
+  body:not(.nest) .metrics { gap: 10px; }
+  body:not(.nest) .metric .value { font-size: 22px; }
+  body:not(.nest) #movement { font-size: 16px; white-space: normal; }
+  body:not(.nest) .radar-panel { order: 1; min-height: 420px; width: 100%; }
+  body:not(.nest) .traffic { display: block; }
+  body:not(.nest) .traffic-label { width: auto; margin-bottom: 12px; }
+  body:not(.nest) .traffic-label br { display: none; }
+  body:not(.nest) .traffic-list { grid-template-columns: 1fr; gap: 16px; }
+  body:not(.nest) footer { flex-wrap: wrap; gap: 8px; }
+}
+@media (max-width: 380px) {
+  body:not(.nest) .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  body:not(.nest) .radar-title .eyebrow { font-size: 9px; letter-spacing: .5px; }
+  body:not(.nest) #range { font-size: 9px; }
+}
+
+.focus-label {
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.nest .focus-label { font-size: 11px; margin-bottom: 6px; }
+
+.metric-detail { color: #c1d3cc; margin-top: 5px; font-size: 13px; }
+body:not(.nest) #movement, .nest #movement { font-size: 13px; letter-spacing: 0; padding: 0; }
+#ias-kmh { display: block; margin-top: 4px; }
+.nest .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nest .metric .value { font-size: 22px; }
+.nest .metric .unit { font-size: 10px; }
+.nest .metric .eyebrow { font-size: 8px; line-height: 1.4; letter-spacing: .3px; }
+.nest #movement { font-size: 11px; }
+
+/* A single, consistent logbook below the live home focus. */
+.logbook { min-width: 0; border: 1px solid var(--line); background: #1021269c; border-radius: 16px; padding: 24px; }
+.logbook h2 { margin: 8px 0; font-size: 30px; letter-spacing: -1px; }
+.logbook p { color: var(--muted); font-size: 13px; line-height: 1.65; }
+.logbook-heading { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+.logbook-heading p { max-width: 75ch; }
+.log-filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 14px; margin: 18px 0; }
+.logbook label { display: flex; flex-direction: column; gap: 7px; font-size: 12px; color: #c1d3cc; }
+.logbook input, .logbook select { min-width: 0; width: 100%; font: inherit; font-size: 14px; color: var(--ink); background: #09171c; border: 1px solid #68818a70; border-radius: 8px; padding: 10px 12px; min-height: 44px; color-scheme: dark; }
+.logbook label[hidden] { display: none; }
+.logbook .log-check { flex-direction: row; align-items: center; align-self: end; min-height: 44px; }
+.logbook .log-check input { width: 18px; min-height: 18px; height: 18px; flex-shrink: 0; accent-color: var(--lime); }
+.log-button { border: 1px solid #68818a90; border-radius: 8px; min-height: 42px; display: inline-flex; justify-content: center; align-items: center; padding: 9px 14px; font: inherit; font-size: 13px; background: #16313a; color: var(--ink); text-decoration: none; cursor: pointer; white-space: nowrap; }
+.log-button.primary { background: var(--lime); color: #102026; border-color: var(--lime); }
+.log-button:disabled, .log-button[aria-disabled="true"] { opacity: .4; cursor: default; }
+.logbook :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+.log-refine { border-block: 1px solid var(--line); margin-bottom: 16px; padding: 12px 0; }
+.log-refine summary, .log-table summary { cursor: pointer; font-size: 13px; min-height: 28px; }
+.log-actions { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.log-actions label:first-of-type { margin-left: auto; }
+.log-actions select { min-height: 42px; }
+.log-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+.log-stat { background: #07191f; border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.log-stat .eyebrow { font-size: 9px; line-height: 1.5; }
+.log-stat strong { font-size: 27px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.log-stat-detail { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.log-insights { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.log-insights h3 { font-size: 13px; font-weight: 500; color: #c1d3cc; }
+.log-insights ol { list-style: none; padding: 0; margin: 0; }
+.log-insights li { display: flex; gap: 14px; justify-content: space-between; font-size: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.log-insights li span { overflow-wrap: anywhere; }
+.log-table-wrap { max-width: 100%; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+.log-table caption { text-align: left; padding: 14px; font-size: 12px; color: var(--muted); background: #0b1b20; }
+.log-table th { padding: 14px 12px; background: #163039; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.log-table td { padding: 14px 12px; border-top: 1px solid var(--line); vertical-align: top; min-width: 95px; font-variant-numeric: tabular-nums; }
+.log-table td:first-child { min-width: 190px; }
+.log-table time { display: block; font-size: 14px; white-space: nowrap; }
+.log-table small { display: block; color: var(--muted); margin-top: 6px; font-size: 10px; line-height: 1.5; }
+.log-table td:nth-child(4), .log-table td:nth-child(5), .log-table td:nth-child(6) { min-width: 165px; }
+.log-table td:nth-child(2) { min-width: 115px; }
+.military-tag { display: inline-block; margin-top: 8px; font-size: 10px; line-height: 1.5; color: var(--muted); }
+.military-tag.tagged { color: #a6e3ff; }
+.log-table dl { min-width: 220px; font-size: 11px; }
+.log-table dt { color: var(--muted); margin-top: 9px; }
+.log-table dd { margin: 4px 0; }
+.log-pagination { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 16px 0; font-size: 12px; color: var(--muted); }
+.logbook .log-footnote { font-size: 11px; margin-bottom: 0; }
+.nest .logbook { display: none; }
+@media (max-width: 760px) {
+  .logbook { padding: 16px; }
+  .logbook-heading { flex-direction: column; gap: 6px; }
+  .log-filter-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .log-stats { grid-template-columns: 1fr 1fr; }
+  .log-stat { padding: 12px; }
+  .log-stat strong { font-size: 23px; }
+  .log-insights { grid-template-columns: 1fr; gap: 12px; }
+  .log-actions label:first-of-type { margin-left: 0; }
+  .log-actions label { flex: 1 1 150px; }
+}
+@media (max-width: 400px) { .log-filter-grid { grid-template-columns: 1fr; } .log-pagination { flex-wrap: wrap; } }
+
+.log-daily { margin-bottom: 24px; font-size: 13px; color: var(--muted); }
+.log-daily summary { min-height: 40px; cursor: pointer; }
+.log-daily ol { list-style: none; padding: 0; max-height: 340px; overflow: auto; }
+.log-daily li { display: grid; grid-template-columns: 90px minmax(60px, 1fr) 40px; align-items: center; gap: 12px; padding: 6px 0; font-size: 12px; }
+.log-daily meter { width: 100%; accent-color: var(--lime); }
+
+.log-table-wrap { max-height: 650px; }
+.log-table thead th { position: sticky; top: 0; z-index: 2; }
+.log-table td:first-child { position: sticky; left: 0; background: #102126; }
+.log-table th:first-child { left: 0; z-index: 3; }
+@media (max-width: 760px) { .log-table-wrap { max-height: 560px; } }
+
+@media (max-width: 760px) {
+  .log-table td:first-child { position: static; }
+  .log-table th:first-child { left: auto; }
+}
+
+.log-time-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 16px; }
+.log-time-controls label { flex: 0 1 220px; }
+.log-about { font-size: 12px; color: var(--muted); margin-top: 16px; }
+.log-about summary { cursor: pointer; padding-block: 8px; }
+@media (max-width: 760px) { .log-time-controls label { flex: 1 1 180px; } }
+
+.log-table .night-flight, .log-table .night-flight td:first-child { background: #292b22; }
+.night-legend { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.night-swatch { width: 14px; height: 14px; flex: 0 0 14px; border: 1px solid #8f856b70; border-radius: 3px; background: #292b22; }
+
+#log-filters { display: flex; flex-direction: column; gap: 12px; padding: 4px 2px 10px; margin: 18px 0 8px; }
+#log-filters .log-filter-grid, #log-filters .log-time-controls { display: flex; flex-wrap: nowrap; align-items: end; gap: 10px; width: 100%; overflow-x: auto; margin: 0; padding: 6px; box-sizing: border-box; }
+#log-filters .log-time-controls label { flex: 0 0 220px; }
+#log-filters label { flex: 1 1 125px; min-width: 100px; }
+#log-filters label:has([name="flight"]), #log-filters label:has([name="period"]) { min-width: 140px; }
+#log-filters [data-period="custom"] { min-width: 170px; }
+#log-filters .log-button { flex: 0 0 auto; }
+.log-table-wrap { transition: opacity .15s ease; }
+.log-table-wrap.updating { opacity: .65; }
+.results-updated .log-table-wrap, .results-updated #log-stats { animation: movements-updated .7s ease-out; }
+@keyframes movements-updated { from { box-shadow: 0 0 0 2px #d7ff8270; } to { box-shadow: 0 0 0 2px transparent; } }
+@media (prefers-reduced-motion: reduce) { .log-table-wrap { transition: none; } .results-updated .log-table-wrap, .results-updated #log-stats { animation: none; } }
+
+.movement-row { cursor: pointer; }
+.movement-row:hover { outline: 1px solid #d7ff8240; outline-offset: -1px; }
+.movement-row.is-expanded { outline: 1px solid #d7ff8270; outline-offset: -1px; }
+.movement-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: left; }
+.movement-toggle:focus-visible { outline: 2px solid var(--lime); outline-offset: 5px; border-radius: 2px; }
+.movement-chevron { color: #d7ff82; transition: transform .18s ease; }
+.movement-toggle[aria-expanded="true"] .movement-chevron { transform: rotate(180deg); }
+.movement-details[hidden] { display: none; }
+.log-table .movement-details td:first-child { position: static; background: #102329; padding: 20px 12px; }
+.movement-detail-panel { position: sticky; left: 12px; width: min(1080px, calc(100vw - 108px)); max-width: 100%; animation: movement-open .18s ease-out; }
+.movement-detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.movement-detail-heading > strong { font-size: 15px; }
+.movement-detail-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.movement-detail-groups section { min-width: 0; }
+.movement-detail-groups h3 { margin: 0 0 14px; color: #d7ff82; font-size: 12px; font-weight: 500; }
+.log-table .movement-detail-groups dl { display: grid; min-width: 0; gap: 12px; margin: 0; }
+.movement-detail-groups dt { color: var(--muted); font-size: 11px; margin: 0 0 4px; }
+.movement-detail-groups dd { margin: 0; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+@keyframes movement-open { from { opacity: .4; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) { .movement-detail-groups { grid-template-columns: 1fr; gap: 24px; } .movement-detail-heading { align-items: start; flex-direction: column; gap: 12px; } }
+@media (prefers-reduced-motion: reduce) { .movement-detail-panel { animation: none; } .movement-chevron { transition: none; } }
+
+.live-aircraft-type { margin-top: 7px; color: #c1d3cc; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+.live-aircraft-type[hidden] { display: none; }
+.nest .live-aircraft-type { margin-top: 4px; font-size: 11px; }
+
+/* The aircraft identity belongs to the large route text for the current movement. */
+.journey .airline-identity { margin-top: 18px; }
+.airline-identity > div:last-child { min-width: 0; }
+.heading .focus-label { margin-bottom: 0; }
+.journey .airline-name { font-size: 14px; }
+.nest .journey .airline-identity { margin-top: 10px; gap: 12px; }
+.nest .journey .logo-box { width: 100px; height: 48px; padding: 6px 10px; }
+.nest .journey .callsign { font-size: 24px; }
+.nest .journey .airline-name { font-size: 12px; }
+.nest .journey .flight-reference { font-size: 9px; }
+.nest .journey .live-aircraft-type { margin-top: 3px; font-size: 10px; }
+
+/* The same ring identifies the current card and its aircraft on the radar. */
+.heading .focus-label { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; color: var(--lime); }
+.heading .focus-label::before { content: ""; width: 11px; height: 11px; flex: 0 0 11px; border: 2px solid var(--lime); border-radius: 50%; box-shadow: 0 0 8px #d7ff8240; }
+.empty .airline-identity { display: none; }
+.plane .focus-ring { fill: none; stroke: none; opacity: 0; }
+.plane.selected .focus-ring { fill: #07171a90; stroke: var(--lime); stroke-width: 2.5px; opacity: 1; filter: drop-shadow(0 0 4px #d7ff8270); }
+.plane.selected text { fill: var(--lime); font-weight: 700; }
+.nest .heading .focus-label { font-size: 12px; }

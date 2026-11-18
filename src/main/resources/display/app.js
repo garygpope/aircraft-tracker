@@ -1,18 +1,22 @@
-import { airlineHeader } from "./airlines.js";
-import { clearPhoto, setPhoto } from "./city-photos.js";
-import { initializeLayout } from "./layout.js";
-import { initializeRadar, radar } from "./radar.js";
+import { airlineHeader } from "./airlines.js?v=current-card-clean-20261114";
+import { clearPhoto, setPhoto } from "./city-photos.js?v=current-card-clean-20261114";
+import { initializeHistory } from "./history.js?v=current-card-clean-20261114";
+import { initializeLayout } from "./layout.js?v=current-card-clean-20261114";
+import { initializeRadar, radar } from "./radar.js?v=current-card-clean-20261114";
 
 ("use strict");
 const el = (id) => document.getElementById(id),
   params = new URLSearchParams(location.search),
   demo = params.has("demo"),
   scenario = params.get("scene");
+const pageTitle = "St Marnock's Airspace";
+document.title = pageTitle;
 let selectedKey = "",
   lastSuccess = null;
 
 initializeLayout(params);
 initializeRadar(params);
+initializeHistory(params);
 
 const examples = [
   {
@@ -20,11 +24,15 @@ const examples = [
     airlineName: "Aer Lingus",
     airlineIcao: "EIN",
     reportedFlightNumber: "EI123",
+    aircraftType: "Airbus A320",
+    aircraftTypeCode: "A320",
     hex: "demo01",
     distanceKm: 1.2,
     isWithinRange: true,
     altitudeFeet: 2100,
     verticalRate: -640,
+    groundSpeedKnots: 142,
+    indicatedAirspeedKnots: 138,
     origin: "Helsinki (HEL)",
     destination: "Dublin (DUB)",
     originCode: "EFHK",
@@ -41,6 +49,8 @@ const examples = [
     isWithinRange: true,
     altitudeFeet: 3400,
     verticalRate: 800,
+    groundSpeedKnots: 195,
+    indicatedAirspeedKnots: 180,
     origin: "Dublin (DUB)",
     destination: "Paris (CDG)",
     originCode: "EIDW",
@@ -57,6 +67,8 @@ const examples = [
     isWithinRange: true,
     altitudeFeet: 35000,
     verticalRate: -400,
+    groundSpeedKnots: 435,
+    indicatedAirspeedKnots: 270,
     routeStatus: "not-found",
     lat: 53.36,
     lon: -6.22,
@@ -91,9 +103,6 @@ function route(p) {
     el("airport").textContent = `${p.origin || "Unknown"} → ${
       p.destination || "Unknown"
     }`;
-    el("note").textContent = demo
-      ? "Demonstration · fictional aircraft, sample route"
-      : "Database route · callsign match, not a verified live flight plan";
     if (label) setPhoto(cityName(label));
     else clearPhoto();
   } else {
@@ -113,49 +122,12 @@ function route(p) {
         unavailable: "Route service temporarily unavailable",
         "no-callsign": "No callsign for a route lookup",
       }[p.routeStatus] || "Route information unavailable";
-    el("note").textContent = uncertain
-      ? "Movement is an estimate · origin and destination remain unverified."
-      : "Aircraft positions and altitude are live from your receiver";
-  }
-}
-function traffic(planes, selected) {
-  el("traffic").replaceChildren();
-  const others = planes
-    .filter((p) => p.hex !== selected?.hex)
-    .sort(SkyTraffic.order)
-    .slice(0, 3);
-  for (const p of others) {
-    const item = document.createElement("div");
-    item.className = "traffic-item " + SkyTraffic.classify(p).kind;
-    const title = document.createElement("strong"),
-      distance = document.createElement("span"),
-      sub = document.createElement("small");
-    title.textContent = p.flight || p.hex;
-    distance.textContent = p.distanceKm.toFixed(1) + " km";
-    sub.textContent =
-      SkyTraffic.classify(p).label +
-      " · " +
-      (p.routeStatus === "found" && SkyTraffic.classify(p).kind !== "likely"
-        ? `${cityName(p.origin)} → ${cityName(p.destination)}`
-        : p.routeStatus === "uncertain"
-        ? "Route needs verification"
-        : p.altitudeFeet == null
-        ? "Altitude unavailable"
-        : p.altitudeFeet.toLocaleString() + " ft");
-    item.append(title, distance, sub);
-    el("traffic").append(item);
-  }
-  if (!others.length) {
-    const item = document.createElement("div");
-    item.className = "traffic-item";
-    item.textContent = "Watching the 10 km home zone";
-    el("traffic").append(item);
   }
 }
 function show(planes) {
+  document.title = demo ? pageTitle : `${pageTitle} - Live`;
   const receivedCount = planes.length;
   planes = planes.filter(SkyTraffic.inRange).sort(SkyTraffic.order);
-  const p = SkyTraffic.select(planes);
   lastSuccess = new Date();
   document.body.classList.remove("offline");
   el("status").textContent = demo ? "Demo · sample flights" : "Receiver live";
@@ -169,6 +141,18 @@ function show(planes) {
       minute: "2-digit",
       second: "2-digit",
     });
+  render(planes);
+  if (!demo) el("mode").textContent = `10 KM ZONE / ${receivedCount} RECEIVED`;
+}
+function showAircraftType(p) {
+  const type = p?.aircraftType?.trim() || p?.aircraftTypeCode?.trim() || "";
+  el("live-aircraft-type").textContent = type;
+  el("live-aircraft-type").hidden = !type;
+}
+function render(planes) {
+  const p = SkyTraffic.select(planes);
+  showAircraftType(p);
+  el("focus-label").textContent = p ? "Current aircraft · closest to home" : "Current aircraft · none nearby";
   el("card").classList.toggle("empty", !p);
   if (p) {
     const key = p.hex + "|" + p.routeStatus;
@@ -186,6 +170,10 @@ function show(planes) {
     el("distance").textContent = p.distanceKm.toFixed(1);
     el("altitude").textContent =
       p.altitudeFeet == null ? "—" : p.altitudeFeet.toLocaleString();
+    const ias = Number.isFinite(p.indicatedAirspeedKnots) && p.indicatedAirspeedKnots >= 0 ? p.indicatedAirspeedKnots : null;
+    el("ias").textContent = ias == null ? "—" : Math.round(ias).toLocaleString();
+    el("ias-kmh").textContent = ias == null ? "" : "· " + Math.round(ias * 1.852).toLocaleString() + " km/h";
+    el("ias").title = ias == null ? "Indicated airspeed not reported by the receiver" : "Reported indicated airspeed";
     el("movement").textContent =
       p.verticalRate == null
         ? "Unknown"
@@ -200,24 +188,26 @@ function show(planes) {
     el("card").dataset.kind = "other";
     selectedKey = "";
     clearPhoto();
-    el("flight").textContent = "LOCAL SKY";
+    el("flight").textContent = "";
     el("badge").textContent = "ALL QUIET";
-    el("direction").textContent = "A little room to daydream";
+    el("direction").textContent = "Even the planes are on a tea break.";
     el("direction").classList.remove("warning");
     el("city").textContent = "The sky is yours.";
     el("airport").textContent =
       "No aircraft within 10 km of home. Watching for the next one.";
     el("distance").textContent = "—";
     el("altitude").textContent = "—";
+    el("ias").textContent = "—";
+    el("ias-kmh").textContent = "";
+    el("ias").title = "";
     el("movement").textContent = "—";
-    el("note").textContent =
-      "The radar will light up when the next aircraft appears.";
   }
   radar(planes, p);
-  traffic(planes, p);
-  if (!demo) el("mode").textContent = `10 KM ZONE / ${receivedCount} RECEIVED`;
 }
 function offline() {
+  document.title = pageTitle;
+  showAircraftType(null);
+  el("focus-label").textContent = "Live view paused · receiver unavailable";
   airlineHeader(null);
   document.body.classList.add("offline");
   clearPhoto();
@@ -230,15 +220,15 @@ function offline() {
   el("city").textContent = "Watching for a signal.";
   el("airport").textContent =
     "The receiver is unavailable. Retrying automatically.";
-  ["distance", "altitude", "movement"].forEach(
+  ["distance", "altitude", "movement", "ias"].forEach(
     (id) => (el(id).textContent = "—")
   );
-  el("note").textContent = "No stale aircraft are being shown.";
+  el("ias-kmh").textContent = "";
+  el("ias").title = "";
   el("updated").textContent = lastSuccess
     ? "Last received " + lastSuccess.toLocaleTimeString()
     : "No connection to receiver";
   radar([], null);
-  traffic([], null);
 }
 async function refresh() {
   try {

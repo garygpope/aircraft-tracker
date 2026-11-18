@@ -18,6 +18,9 @@ internal data class SourceAircraft(
     val category: String? = null,
     val alt_baro: JsonPrimitive? = null,
     val baro_rate: Int? = null,
+    val gs: Double? = null,
+    val ias: Double? = null,
+    val dbFlags: Int? = null,
     val seen: Double? = null,
     val seen_pos: Double? = null
 )

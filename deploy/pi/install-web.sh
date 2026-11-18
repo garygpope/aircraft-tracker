@@ -71,7 +71,7 @@ if ! lighttpd -p -f /etc/lighttpd/lighttpd.conf | grep -q '"mod_redirect"'; then
 fi
 lighttpd -tt -f /etc/lighttpd/lighttpd.conf
 systemctl reload lighttpd
-for asset in '' styles.css app.js traffic.js radar.js layout.js airlines.js city-photos.js city-fallback.svg logos/EIN.png api/data/aircraft; do
+for asset in '' styles.css app.js traffic.js radar.js layout.js airlines.js city-photos.js history.js city-fallback.svg logos/EIN.png api/data/aircraft; do
   curl -fsS --max-time 15 "http://127.0.0.1/overtheroof/$asset" >/dev/null
 done
 curl -fsS --max-time 10 http://127.0.0.1/ >/dev/null

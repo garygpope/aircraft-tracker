@@ -30,14 +30,16 @@ export function airlineHeader(p) {
     logoKey = "";
     el("logo-box").hidden = true;
     el("airline-logo").removeAttribute("src");
-    el("airline-name").textContent = "LOCAL SKY";
+    el("airline-name").textContent = "";
+    el("airline-name").hidden = true;
     el("flight-reference").textContent = "";
     return;
   }
   const prefix = (p.airlineIcao || p.flight?.slice(0, 3) || "").toUpperCase(),
     known = airlineDirectory[prefix];
+  el("airline-name").hidden = false;
   el("airline-name").textContent =
-    p.airlineName || known?.[0] || "Aircraft nearby";
+    p.airlineName || known?.[0] || (p.militaryStatus === "military" ? "Military aircraft" : p.militaryStatus === "possible" ? "Possible military aircraft" : "Aircraft nearby");
   const number =
     p.routeStatus === "found" &&
     /^[A-Z0-9]{2}[0-9]{1,4}$/.test(p.reportedFlightNumber || "")

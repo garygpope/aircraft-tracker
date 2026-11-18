@@ -10,7 +10,8 @@ import kotlinx.serialization.json.intOrNull
 
 class AircraftService(
     private val dataClient: HttpClient,
-    private val routeLookup: RouteLookupService
+    private val routeLookup: RouteLookupService,
+    private val typeLookup: AircraftTypeLookup? = null
 ) {
     private val here = LatLng(53.417032269941224, -6.14787466897715)
 
@@ -23,9 +24,12 @@ class AircraftService(
                 (sourceAircraft.seen ?: 0.0) <= 30.0 &&
                 (sourceAircraft.seen_pos ?: 0.0) <= 30.0) {
                 val distanceInKm = here.distanceKmTo(LatLng(sourceAircraft.lat, sourceAircraft.lon))
+                val military = MilitaryIdentity.classify(sourceAircraft.hex, sourceAircraft.flight, sourceAircraft.dbFlags)
                 results.add(
                     Aircraft(
                         hex = sourceAircraft.hex,
+                        militaryStatus = military.status,
+                        militaryBasis = military.basis,
                         flight = sourceAircraft.flight?.trim(),
                         origin = "",
                         destination = "",
@@ -42,6 +46,8 @@ class AircraftService(
                         isWithinRange = distanceInKm <= HOME_RADIUS_KM,
                         altitudeFeet = sourceAircraft.alt_baro?.intOrNull,
                         verticalRate = sourceAircraft.baro_rate,
+                        groundSpeedKnots = sourceAircraft.gs?.takeIf { it.isFinite() && it >= 0 },
+                        indicatedAirspeedKnots = sourceAircraft.ias?.takeIf { it.isFinite() && it >= 0 },
                         seenSeconds = sourceAircraft.seen))
             }
         }
@@ -53,18 +59,22 @@ class AircraftService(
                 aircraft.distanceKm > 30.0)
                 aircraft
             else {
-                val route = routeLookup.routeFor(aircraft.flight)
+                val type = typeLookup?.typeFor(aircraft.hex)
+                val route = routeLookup.routeFor(aircraft.flight, aircraft)
+                val status = route.statusFor(aircraft)
+                val usable = status == "found"
                 aircraft.copy(
-                    origin = route.origin?.label(),
-                    destination = route.destination?.label(),
-                    originCode = route.origin?.icao_code,
-                    destinationCode = route.destination?.icao_code,
-                    routeStatus = route.statusFor(aircraft),
-                    routeSource = if (route.status == "found") "adsbdb" else null,
-                    airlineName = route.airline?.name,
+                    origin = if (usable) route.origin?.label() else null,
+                    destination = if (usable) route.destination?.label() else null,
+                    originCode = if (usable) route.origin?.icao_code else null,
+                    destinationCode = if (usable) route.destination?.icao_code else null,
+                    routeStatus = status,
+                    routeSource = if (usable) route.source else null,
+                    airlineName = if (aircraft.flight?.startsWith("EAI") == true) "Aer Lingus Regional (Emerald Airlines)" else route.airline?.name,
                     airlineIcao = route.airline?.icao,
                     airlineIata = route.airline?.iata,
-                    reportedFlightNumber = route.reportedFlightNumber)
+                    reportedFlightNumber = if (usable) route.reportedFlightNumber else null,
+                    aircraftType = type?.label, aircraftTypeCode = type?.code, aircraftTypeSource = type?.source)
             }
         }
     }

@@ -76,6 +76,10 @@ export function radar(planes, selected) {
     if (!marker) {
       marker = document.createElementNS(NS, "g");
       marker.classList.add("plane");
+      const highlight = document.createElementNS(NS, "circle");
+      highlight.classList.add("focus-ring");
+      highlight.setAttribute("r", "17");
+      marker.append(highlight);
       const symbol = document.createElementNS(NS, "g"),
         path = document.createElementNS(NS, "path");
       path.setAttribute(
@@ -93,8 +97,15 @@ export function radar(planes, selected) {
     marker.style.transform = `translate(${200 + (x / range) * 170}px,${
       200 - (y / range) * 170
     }px)`;
-    marker.firstChild.setAttribute("transform", `rotate(${p.track ?? 0})`);
-    marker.lastChild.textContent = p.flight || p.hex;
+    marker.querySelector("g").setAttribute("transform", `rotate(${p.track ?? 0})`);
+    const isCurrent = p.hex === selected?.hex;
+    const name = p.flight || p.hex;
+    marker.lastChild.textContent = name;
+    const labelOnLeft = x > 0;
+    marker.lastChild.setAttribute("x", labelOnLeft ? "-23" : "23");
+    marker.lastChild.setAttribute("text-anchor", labelOnLeft ? "end" : "start");
+    marker.setAttribute("role", "img");
+    marker.setAttribute("aria-label", `${name}${isCurrent ? ", current aircraft shown in the card" : ""}`);
     marker.setAttribute(
       "class",
       "plane " +
@@ -108,4 +119,6 @@ export function radar(planes, selected) {
       markers.delete(key);
     }
   }
+  const currentMarker = selected && markers.get(selected.hex);
+  if (currentMarker && active.has(selected.hex)) el("planes").append(currentMarker);
 }

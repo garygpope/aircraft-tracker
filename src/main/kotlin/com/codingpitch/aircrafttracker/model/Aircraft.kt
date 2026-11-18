@@ -20,6 +20,8 @@ data class Aircraft(
     val isWithinRange: Boolean,
     val altitudeFeet: Int? = null,
     val verticalRate: Int? = null,
+    val groundSpeedKnots: Double? = null,
+    val indicatedAirspeedKnots: Double? = null,
     val seenSeconds: Double? = null,
     val originCode: String? = null,
     val destinationCode: String? = null,
@@ -28,5 +30,10 @@ data class Aircraft(
     val airlineName: String? = null,
     val airlineIcao: String? = null,
     val airlineIata: String? = null,
-    val reportedFlightNumber: String? = null
+    val militaryStatus: String = "unknown",
+    val militaryBasis: String? = null,
+    val reportedFlightNumber: String? = null,
+    val aircraftType: String? = null,
+    val aircraftTypeCode: String? = null,
+    val aircraftTypeSource: String? = null
 )

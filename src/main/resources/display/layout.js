@@ -1,7 +1,9 @@
 const el = (id) => document.getElementById(id);
 export function initializeLayout(params) {
-  document.body.classList.add("nest");
   const castMode = params.get("cast") === "1";
+  const nestMode = castMode || params.get("view") === "nest" || params.get("preview") === "fit";
+  document.body.classList.toggle("nest", nestMode);
+  if (!nestMode) return;
   let fillPreview = castMode || params.get("preview") === "fit";
   document.body.classList.toggle("cast-view", castMode);
   function fitNest() {

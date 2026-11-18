@@ -21,7 +21,7 @@ const departure = {
   routeStatus: "found",
   originCode: "EIDW",
 };
-assert.equal(s.select([cross, arrival]).hex, "in");
+assert.equal(s.select([cross, arrival]).hex, "cross");
 assert.equal(s.select([arrival, departure]).hex, "out");
 assert.equal(s.select([{ ...arrival, distanceKm: 10.01 }]), undefined);
 assert.equal(s.inRange({ ...arrival, distanceKm: 10 }), true);
@@ -42,4 +42,11 @@ assert.equal(
 );
 assert.equal(s.classify({ ...low, altitudeFeet: 35000 }).kind, "other");
 assert.equal(s.classify({ ...low, track: null }).kind, "other");
-console.log("9 traffic priority, range, and classification checks passed");
+// Route enrichment and classifications cannot steal focus from a closer aircraft.
+assert.equal(s.select([arrival, { ...cross, routeStatus: "pending" }]).hex, "cross");
+assert.equal(s.select([arrival, { ...cross, routeStatus: "uncertain" }]).hex, "cross");
+assert.equal(s.select([{ ...arrival, distanceKm: 0.4 }, cross]).hex, "in");
+assert.equal(s.select([]), undefined);
+assert.equal(s.select([{ ...cross, distanceKm: NaN }, arrival]).hex, "in");
+assert.equal(s.select([{ ...cross, distanceKm: 2, hex: "b" }, { ...cross, distanceKm: 2, hex: "a" }]).hex, "a");
+console.log("Closest-to-home focus, live handover, range, tie and classification checks passed");

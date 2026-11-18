@@ -12,3 +12,6 @@ out/
 
 # macOS metadata
 .DS_Store
+
+# Local passage summaries
+data/

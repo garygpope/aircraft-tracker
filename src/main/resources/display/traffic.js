@@ -69,9 +69,10 @@ globalThis.SkyTraffic = (() => {
     };
   }
   const inRange = (p) =>
-    Number.isFinite(p.distanceKm) && p.distanceKm <= HOME_RANGE_KM;
+    Number.isFinite(p.distanceKm) && p.distanceKm >= 0 && p.distanceKm <= HOME_RANGE_KM;
+  // Distance from home always decides the feature; a known route never outranks it.
   const order = (a, b) =>
-    classify(a).priority - classify(b).priority || a.distanceKm - b.distanceKm;
+    a.distanceKm - b.distanceKm || String(a.hex).localeCompare(String(b.hex));
   return {
     HOME_RANGE_KM,
     classify,

@@ -53,3 +53,11 @@ directory. It backs up the current page and any previous custom script under
 cache-versioned script tag to `/var/www/html/index.html`. Refresh the status
 page; no service restart is needed. A PiAware package upgrade may overwrite the
 HTML page; rerun this installer to restore the indicator.
+
+## Flight log
+
+Keep `HISTORY_FILE` pointing at the old near-home file so the first upgrade can import it and its `military-sightings.json` sibling. The new single recorder writes `flight-log.json` beside it; alternatively set `LOG_FILE` to a stable writable path. Keep both legacy archives and the new canonical JSON/metadata files outside the application JAR.
+
+The recorder covers all observed aircraft within 10 km with rolling 30-day retention. Near-home and military selections are filters, not separate stores. Safety ceilings are 50,000 passages / 32 MiB; clipping is explicitly reported and must be investigated if reached. Saves are atomic and batched every five minutes plus shutdown. No full tracks are stored. Existing seven-day records cannot supply a month of prior history; coverage grows over time.
+
+Before upgrading, back up the old JAR, service override and complete state directory. After restart, check `/overtheroof/api/data/logbook`: the health entry should be `saved` / `live`, `retentionDays` 30, and old observations should remain represented without duplicates. Confirm one canonical file, correct ownership, writable state storage and matching public assets. Preserve the legacy files for rollback/recovery. Stop the recorder before manually restoring any state file to avoid overwriting new observations.

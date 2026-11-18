@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#091a22" />
-    <title>Over the roof · Live sky</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <title>St Marnock's Airspace</title>
+    <link rel="stylesheet" href="./styles.css?v=current-card-clean-20261114" />
   </head>
   <body>
     <main>
@@ -18,7 +18,7 @@
               stroke-width="1.5"
             />
           </svg>
-          <h1>Over the roof<span style="color: var(--lime)">.</span></h1>
+          <h1>St Marnock's Airspace</h1>
         </div>
         <div class="live" role="status">
           <i class="dot"></i><span id="status">Connecting</span>
@@ -28,21 +28,12 @@
         </div>
       </header>
       <div class="stage">
-        <section class="flight-card" id="card" aria-label="Featured aircraft">
+        <section class="flight-card" id="card" aria-label="Current aircraft closest to home">
           <div class="contours"></div>
           <img class="photo" id="photo" alt="" />
           <div class="shade"></div>
           <div class="heading">
-            <div class="airline-identity">
-              <div class="logo-box" id="logo-box" hidden>
-                <img id="airline-logo" alt="" />
-              </div>
-              <div>
-                <div class="airline-name" id="airline-name">LOCAL SKY</div>
-                <span class="callsign" id="flight">LISTENING</span>
-                <div class="flight-reference" id="flight-reference"></div>
-              </div>
-            </div>
+            <div class="focus-label" id="focus-label">Current aircraft · connecting</div>
             <span class="badge" id="badge">LISTENING</span>
           </div>
           <div class="journey">
@@ -51,13 +42,24 @@
             <div class="airport" id="airport">
               Connecting to your PiAware receiver
             </div>
+            <div class="airline-identity">
+              <div class="logo-box" id="logo-box" hidden>
+                <img id="airline-logo" alt="" />
+              </div>
+              <div>
+                <div class="airline-name" id="airline-name" hidden></div>
+                <span class="callsign" id="flight">LISTENING</span>
+                <div class="flight-reference" id="flight-reference"></div>
+                <div class="live-aircraft-type" id="live-aircraft-type" hidden></div>
+              </div>
+            </div>
           </div>
           <section
             class="radar-panel"
             aria-label="Live aircraft positions around home"
           >
             <div class="radar-title">
-              <span class="eyebrow">The neighbourhood sky</span>
+              <span class="eyebrow">St Marnock's Airspace</span>
             </div>
             <span id="range">10 KM RANGE</span
             ><svg
@@ -171,22 +173,48 @@
                 ><span class="unit">ft</span>
               </div>
               <div class="eyebrow">Altitude</div>
+              <div class="metric-detail" id="movement">—</div>
             </div>
             <div class="metric">
-              <div class="value" id="movement">—</div>
-              <div class="eyebrow">Vertical movement</div>
+              <div><span class="value" id="ias">—</span><span class="unit">kt</span></div>
+              <div class="eyebrow">IAS · Indicated airspeed <span id="ias-kmh"></span></div>
             </div>
-          </div>
-          <div class="note" id="note">
-            Live positions from your rooftop receiver
           </div>
           <div class="credit" id="credit"></div>
         </section>
       </div>
-      <div class="traffic">
-        <div class="traffic-label eyebrow">Also<br />in the sky</div>
-        <div class="traffic-list" id="traffic"></div>
-      </div>
+      <section class="logbook" id="logbook" aria-labelledby="logbook-title">
+        <div class="logbook-heading"><div><h2 id="logbook-title">Flight log</h2></div>
+          <a class="log-button" id="log-export" href="./api/data/logbook.csv" download>Export CSV</a></div>
+        <form id="log-filters" aria-label="Movement filters">
+          <div class="log-time-controls">
+            <label>Log dates<select name="period" id="log-period"><option value="hour">Last hour</option><option value="3hours">Last 3 hours</option><option value="today" selected>Today</option><option value="last-night">Last night (23:00–07:00)</option><option value="7days">Last 7 days</option><option value="14days">Last 14 days</option><option value="all">Last 30 days</option><option value="custom">Date &amp; time range</option><option value="night">A particular night</option></select></label>
+            <label data-period="custom" hidden>From · Dublin time<input name="from" type="datetime-local" step="60" /></label>
+            <label data-period="custom" hidden>Before · Dublin time<input name="to" type="datetime-local" step="60" /></label>
+            <label data-period="night" hidden>Night starting on<input name="night" id="log-night" type="date" /></label>
+          </div>
+          <div class="log-filter-grid">
+            <label>Airline<select name="airline"><option value="">All airlines</option><option value="__unknown__">Unknown</option></select></label>
+            <label>Origin<select name="origin"><option value="">All origins</option><option value="__unknown__">Unknown</option></select></label>
+            <label>Destination<select name="destination"><option value="">All destinations</option><option value="__unknown__">Unknown</option></select></label>
+            <label>Movement Type<select name="route"><option value="all">All movements</option><option value="departure">Dublin Departure</option><option value="arrival">Dublin Arrival</option><option value="unknown">Unknown</option></select></label>
+            <label>Flight number<input name="flight" placeholder="Flight number or callsign" maxlength="120" /></label>
+            <button type="reset" class="log-button">Reset</button>
+          </div>
+        </form>
+        <p id="log-status" role="status" aria-live="polite">Loading flight log…</p>
+        <div id="log-stats" class="log-stats" aria-label="Statistics for all matching movements"></div>
+        <div class="log-insights" id="log-insights"></div>
+        <div class="night-legend"><span class="night-swatch" aria-hidden="true"></span><span>Shaded row: night movement · 23:00–07:00 Dublin time</span></div>
+        <div class="log-table-wrap" id="log-results" tabindex="0" role="region" aria-label="Flight log table, scroll horizontally for all columns">
+          <table class="log-table"><caption id="log-caption">Observed movements · Dublin time · newest closest approach first</caption>
+            <thead><tr><th scope="col">Closest approach</th><th scope="col">Callsign / aircraft</th><th scope="col">Flight number</th><th scope="col">Airline</th><th scope="col">Aircraft type</th><th scope="col">Route</th><th scope="col">Closest km</th><th scope="col">Altitude ft</th><th scope="col">IAS kt / km/h</th></tr></thead>
+            <tbody id="log-rows"></tbody>
+          </table>
+        </div>
+        <nav class="log-pagination" aria-label="Flight log pages"><button class="log-button" type="button" id="log-prev">Previous</button><span id="log-page"></span><button class="log-button" type="button" id="log-next">Next</button></nav>
+        <details class="log-about"><summary>About this log</summary><p id="log-coverage"></p><p class="log-footnote">Night: 23:00–07:00 Dublin time, labelled by the date it starts. Rows use closest approach. Missing readings stay blank. Routes are database matches. Missing metadata is retried in the background; refreshed routes are labelled and limited to movements from the last 24 hours. Older imports contain near-home and military sightings only.</p></details>
+      </section>
       <footer>
         <span id="updated">Waiting for the receiver</span
         ><span id="mode">PIAWARE / DUBLIN</span>
@@ -197,7 +225,7 @@
       ><button id="preview-toggle" type="button">Fill tab for casting</button>
     </div>
     <div class="refresh" aria-hidden="true"></div>
-    <script src="./traffic.js"></script>
-    <script type="module" src="./app.js"></script>
+    <script src="./traffic.js?v=current-card-clean-20261114"></script>
+    <script type="module" src="./app.js?v=current-card-clean-20261114"></script>
   </body>
 </html>

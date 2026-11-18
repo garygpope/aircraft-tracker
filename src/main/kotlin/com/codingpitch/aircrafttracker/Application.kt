@@ -27,7 +27,7 @@ fun Application.serviceModule() {
     val services = ApplicationServices(environment.config)
     environment.monitor.subscribe(ApplicationStopped) { services.close() }
     routing {
-        aircraftRoutes(services.aircraft)
+        aircraftRoutes(services.aircraft, services.history)
         staticResources("/", "display", index = "index.html")
     }
 }
